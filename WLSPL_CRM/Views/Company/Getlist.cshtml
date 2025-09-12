@@ -25,6 +25,15 @@
 
 </head>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -77,16 +86,26 @@
                                                 <td>@company.GSTNo</td>
                                                 <td>@company.AreaNAme</td>
                                                 <td>
-                                                    @* <a href="@Url.Action("GetLeadbyID", "Lead", new { id = lead.ID })" class="btn btn-primary">Edit</a> *@
-
-                                                    <a href="@Url.Action("GetcompanybyID", "company", new { id = company.Id })" class="btn btn-success btn-sm">
-                                                        <i class="fa fa-edit"></i> Edit
+                                                    <a href="@Url.Action("GetcompanybyID", "company", new { id = company.Id })"
+                                                       class="btn btn-success btn-sm"
+                                                       data-bs-toggle="tooltip"
+                                                       data-bs-placement="top"
+                                                       title="Edit">
+                                                        <i class="fa fa-edit"></i>
                                                     </a>
 
-                                                    <a href="@Url.Action("Deletecompany", "company",new { id = company.Id })" class="btn btn-danger btn-sm">
-                                                        <i class="fa fa-trash"></i> Delete
+                                                    &nbsp;
+
+
+                                                    <a href="@Url.Action("Deletecompany", "company", new { id = company.Id })"
+                                                       class="btn btn-danger btn-sm"
+                                                       data-bs-toggle="tooltip"
+                                                       data-bs-placement="top"
+                                                       title="Delete">
+                                                        <i class="fa fa-trash"></i>
                                                     </a>
                                                 </td>
+
 
                                             </tr>
                                         }
@@ -226,5 +245,6 @@
 <script src="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.js"></script>
 <script src="~/assets/js/pages/editable.init.js"></script>
 <script src="~/assets/js/app.js"></script>
+
 
 
