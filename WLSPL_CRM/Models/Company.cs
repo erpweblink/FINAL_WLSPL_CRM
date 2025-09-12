@@ -56,8 +56,6 @@
             public string? MobileNo { get; set; }
             public string? EmailID { get; set; }
             public string? Designation { get; set; }
-
-
         }
     }
 }
