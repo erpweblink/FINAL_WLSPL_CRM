@@ -1,0 +1,441 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>WLSPL | CRM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="" name="author" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/WLSPL_FAVICON.png">
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+
+
+    @* used that style for drak-light mode  *@
+    <style>
+        /* Hide/show icons based on theme */
+        #light-dark .dark {
+            display: none;
+        }
+
+        body.dark-mode #light-dark .dark {
+            display: inline;
+        }
+
+        body.dark-mode #light-dark .light {
+            display: none;
+        }
+
+        /* Example dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #f5f5f5;
+        }
+    </style>
+    <!-- end dark-light mode style -->
+    <style>
+
+        @@media (max-width: 330.98px) {
+            .startbar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            @@media (min-width: 330px) and (max-width: 800.98px) {
+                .startbar {
+                    width: 120px;
+                }
+
+                .brand {
+                    padding: 10px;
+                }
+
+                .startbar-menu {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                }
+            }
+
+            @@media (min-width: 900px) {
+                .startbar-menu {
+                    display: block !important;
+                }
+
+                .btn.d-lg-none {
+                    display: none;
+                }
+            }
+    </style>
+
+</head>
+
+<body>
+    <!-- Top Bar Start -->
+    <div class="topbar d-print-none">
+        <div class="container-xxl">
+            <nav class="topbar-custom d-flex justify-content-between" id="topbar-custom">
+
+                <ul class="topbar-item list-unstyled d-inline-flex align-items-center mb-0">
+                    <li>
+                    <button class="nav-link mobile-menu-btn nav-icon" id="togglemenu">
+							<i class="iconoir-menu-scale"></i>
+                    </li>
+
+                    <li class="mx-3 welcome-text" style="padding-left: -223px;">
+                        @if (Context.Session.GetString("userName") != null)
+                        {
+                            <h3 class="mb-0 fw-bold text-truncate">
+                                @Context.Session.GetString("greeting"), @Context.Session.GetString("userName")!
+                            </h3>
+                        }
+                    </li>
+                </ul>
+
+                    <li class="hide-phone app-search">
+                        <form role="search" action="#" method="get">
+                            <input type="search" name="search" class="form-control top-search mb-0" placeholder="Search here~.">
+                            <button type="submit"><i class="iconoir-search"></i></button>
+                        </form>
+
+
+                    </li>
+
+                    <li class="topbar-item">
+                        <a class="nav-link nav-icon" id="light-dark">
+                            <i class="icofont-moon dark"></i>
+                            <i class="icofont-sun light"></i>
+                        </a>
+                        &nbsp;&nbsp;
+                           <a href="@Url.Action("Index", "Chat")" style="display: inline-block;">
+                              <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="Chat" style="width: 52px; height: 52px;">
+                            </a>
+                    </li>
+                  
+
+
+                    <li class="dropdown topbar-item">
+                       <a class="nav-link dropdown-toggle arrow-none nav-icon" data-bs-toggle="dropdown" href="#" role="button"
+                           aria-haspopup="false" aria-expanded="false">
+				           <img src="@Context.Session.GetString("Profile")" alt="" class="thumb-lg rounded-circle">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end py-0">
+				                        <div class="d-flex align-items-center dropdown-item py-2 bg-secondary-subtle">
+					                        <div class="flex-shrink-0">
+						                        <img src="@Context.Session.GetString("Profile")" alt="" class="thumb-md rounded-circle">
+					                        </div>
+					                        <div class="flex-grow-1 ms-2 text-truncate align-self-center">
+						                        <h6 class="my-0 fw-medium text-dark fs-13">@Context.Session.GetString("FullName")</h6>
+						                        <small class="text-muted mb-0">@Context.Session.GetString("Department")</small>
+					                        </div><!--end media-body-->
+				         </div>
+                            <div class="dropdown-divider mt-0"></div>
+                            <small class="text-muted px-2 pb-1 d-block">Account</small>
+                            <a class="dropdown-item" href="/Dashboard/ShowProfile"><i class="las la-user fs-18 me-1 align-text-bottom"></i> Profile</a>
+                            <a class="dropdown-item" href="pages-faq.html"><i class="las la-wallet fs-18 me-1 align-text-bottom"></i> Earning</a>
+                            <small class="text-muted px-2 py-1 d-block">Settings</small>
+                            <a class="dropdown-item" href="pages-profile.html"><i class="las la-cog fs-18 me-1 align-text-bottom"></i>Account Settings</a>
+                            <a class="dropdown-item" href="pages-profile.html"><i class="las la-lock fs-18 me-1 align-text-bottom"></i> Security</a>
+                            <a class="dropdown-item" href="pages-faq.html"><i class="las la-question-circle fs-18 me-1 align-text-bottom"></i> Help Center</a>
+                            <div class="dropdown-divider mb-0"></div>
+                            <a class="dropdown-item text-danger" href="/login/logout"><i class="las la-power-off fs-18 me-1 align-text-bottom"></i> Logout</a>
+                        </div>
+                    </li>
+                </ul><!--end topbar-nav-->
+            </nav>
+            <!-- end navbar-->
+        </div>
+    </div>
+    <!-- Top Bar End -->
+    <!-- leftbar-tab-menu -->
+
+    <div class="startbar d-print-none">
+        <!-- Start brand -->
+        <div class="brand d-flex justify-content-between align-items-center px-3 py-2">
+           <a href="#" class="logo">
+				<span>
+					<img src="~/assets/wlsplimage/logo-sm.png" alt="logo-small" class="logo-sm" style="margin-left: -21px;">
+				</span>
+				<span class="">
+					<img src="~/assets/wlsplimage/logo-light.png" alt="logo-large" class="logo-lg logo-light" style="height: 50px;">
+					<img src="~/assets/wlsplimage/logo-dark.png" alt="logo-large" class="logo-lg logo-dark" style="height: 50px;">
+				</span>
+</a>
+
+            <!-- Sidebar toggle button (for mobile view) -->
+            <button class="btn btn-sm d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#startbarCollapse" aria-controls="startbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <!-- End brand -->
+        <!-- Start startbar-menu -->
+        <div class="startbar-menu">
+            <div class="collapse d-lg-block" id="startbarCollapse" data-simplebar>
+                <div class="d-flex align-items-start flex-column w-100">
+                    <!-- Navigation -->
+
+                    <ul class="navbar-nav mb-auto w-100">
+                     <li class="nav-item">
+                       <div class="nav-item ">
+                                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
+                                        <i class="iconoir-dashboard-speed menu-icon"></i>
+                                        <span>Dashboard</span>
+                                    </a>
+                             </div>
+                      </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
+                               aria-expanded="false" aria-controls="sidebarDashboards">
+                                <i class="iconoir-home-simple menu-icon"></i>
+                                <span>CRM</span>
+                            </a>
+                            <div class="collapse " id="sidebarDashboards">
+                                <ul class="nav flex-column">
+                                    <!--end nav-item-->
+                                    <!--end nav-item-->
+                                    @if (Context.Session.GetString("Department") == "HR" || Context.Session.GetString("Department") == "Admin" || Context.Session.GetString("Department") == "SUP_Admin")
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="Login" asp-action="Getdashboard">
+                                                <div class="d-flex align-items-center"><span class="nav-link-text">User's</span></div>
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (Context.Session.GetString("Department") == "Admin" || Context.Session.GetString("Department") == "SUP_Admin" || Context.Session.GetString("Department") == "SALES")
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="Company" asp-action="Getlist">
+                                                <div class="d-flex align-items-center"><span class="nav-link-text">Customer list</span></div>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="Lead" asp-action="Getleadlist">
+                                                <div class="d-flex align-items-center"><span class="nav-link-text">Lead Generation</span></div>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="Prospect" asp-action="getprospectlist">
+                                                <div class="d-flex align-items-center"><span class="nav-link-text">Prospect</span></div>
+                                            </a>
+                                        </li>
+                                    }
+
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#sidebarApplications" data-bs-toggle="collapse" role="button"
+                               aria-expanded="false" aria-controls="sidebarApplications">
+                                <i class="iconoir-view-grid menu-icon"></i>
+                                <span>ERP</span>
+                            </a>
+                            <div class="collapse " id="sidebarApplications">
+                                <ul class="nav flex-column">
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Quotation" asp-action="GetQuotationlist">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text">Quotation</span></div>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Proforma" asp-action="Index">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text">Proforma</span></div>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Workorder" asp-action="Getworkorderlist">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text">Work-Order</span></div>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Invoice" asp-action="Index">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text">Tax Invoice</span></div>
+                                        </a>
+                                    </li>
+
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Services" asp-action="Getlist">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text">Services</span></div>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Services" asp-action="GetlistForAdmin">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text">Packages</span></div>
+                                        </a>
+                                    </li>
+                                </ul><!--end nav-->
+                            </div><!--end startbarApplications-->
+                        </li><!--end nav-item-->
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#sidebarApplicationss" data-bs-toggle="collapse" role="button"
+                               aria-expanded="false" aria-controls="sidebarApplicationss">
+                                <i class="iconoir-view-grid menu-icon"></i>
+                                <span>HRMS</span>
+                            </a>
+                            <div class="collapse " id="sidebarApplicationss">
+                                <ul class="nav flex-column">
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Workforce" asp-action="GetQuotationlist">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text">Workforce</span></div>
+                                        </a>
+                                    </li>
+
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Performance" asp-action="Index">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text">Performance</span></div>
+                                        </a>
+                                    </li>
+
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Payroll" asp-action="Getworkorderlist">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text">Payroll</span></div>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Attendance" asp-action="Index">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text">Attendance</span></div>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Recruitment" asp-action="Index">
+                                            <div class="d-flex align-items-center"><span class="nav-link-text">Recruitment</span></div>
+                                        </a>
+                                    </li>
+                                </ul><!--end nav-->
+                            </div><!--end startbarApplications-->
+                        </li><!--end nav-item-->
+
+                    </ul><!--end navbar-nav--->
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- end leftbar-tab-menu-->
+
+    <div class="page-wrapper">
+        <!-- Page Content-->
+        <div class="page-content">
+            <div class="container-xxl">
+            </div><!-- container -->
+            <!--Start Rightbar-->
+            <!--Start Rightbar/offcanvas-->
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="Appearance" aria-labelledby="AppearanceLabel">
+                <div class="offcanvas-header border-bottom justify-content-between">
+                    <h5 class="m-0 font-14" id="AppearanceLabel">Appearance</h5>
+                    <button type="button" class="btn-close text-reset p-0 m-0 align-self-center" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <h6>Account Settings</h6>
+                    <div class="p-2 text-start mt-3">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="settings-switch1">
+                            <label class="form-check-label" for="settings-switch1">Auto updates</label>
+                        </div><!--end form-switch-->
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="settings-switch2" checked>
+                            <label class="form-check-label" for="settings-switch2">Location Permission</label>
+                        </div><!--end form-switch-->
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="settings-switch3">
+                            <label class="form-check-label" for="settings-switch3">Show offline Contacts</label>
+                        </div><!--end form-switch-->
+                    </div><!--end /div-->
+                    <h6>General Settings</h6>
+                    <div class="p-2 text-start mt-3">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="settings-switch4">
+                            <label class="form-check-label" for="settings-switch4">Show me Online</label>
+                        </div><!--end form-switch-->
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="settings-switch5" checked>
+                            <label class="form-check-label" for="settings-switch5">Status visible to all</label>
+                        </div><!--end form-switch-->
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="settings-switch6">
+                            <label class="form-check-label" for="settings-switch6">Notifications Popup</label>
+                        </div><!--end form-switch-->
+                    </div><!--end /div-->
+                </div><!--end offcanvas-body-->
+            </div>
+            <!--end Rightbar/offcanvas-->
+            <div class="container">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                    @RenderSection("Scripts", required: false)
+                </main>
+            </div>
+
+
+            <!--end footer-->
+        </div>
+        <!-- end page content -->
+    </div>
+
+    <script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="~/assets/js/app.js"></script>
+
+    <!-- script for dark light mode changes -->
+    <script>
+        (function () {
+          try {
+            const storedTheme = localStorage.getItem("theme") || "light";
+            setTheme(storedTheme);
+          } catch (e) {}
+        })();
+
+        function setTheme(theme) {
+          document.documentElement.setAttribute("data-bs-theme", theme);
+          document.body.setAttribute("data-bs-theme", theme);
+          updateThemeIcon(theme);
+        }
+
+        function updateThemeIcon(theme) {
+          const darkIcon = document.querySelector("#light-dark .dark");
+          const lightIcon = document.querySelector("#light-dark .light");
+
+          if (!darkIcon || !lightIcon) return;
+
+          if (theme === "dark") {
+            darkIcon.style.display = "inline";
+            lightIcon.style.display = "none";
+          } else {
+            darkIcon.style.display = "none";
+            lightIcon.style.display = "inline";
+          }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          const toggle = document.getElementById("light-dark");
+          if (!toggle) return;
+
+          toggle.addEventListener("click", (e) => {
+            e.preventDefault();
+            const currentTheme = document.documentElement.getAttribute("data-bs-theme") || "light";
+            const newTheme = currentTheme === "light" ? "dark" : "light";
+            localStorage.setItem("theme", newTheme);
+            setTheme(newTheme);
+          });
+        });
+    </script>
+    <!-- end script for dark light mode -->
+
+</body>
+</html>
+

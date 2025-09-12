@@ -1,0 +1,527 @@
+﻿@model List<WLSPL_CRM_2.Models.Message>
+@{
+    ViewData["Title"] = "Showprofile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var currentUserId = ViewBag.currentUserId ?? 0;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WhatsApp Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* General Reset and Body */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E0E0E0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Chat Application Container */
+        .chat-app {
+            display: flex;
+            width: 98%;
+            max-width: 1400px;
+            height: 98vh;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background-color: #F8F8F8;
+            min-width: 700px; /* Prevent the whole app from getting too narrow */
+        }
+
+        /* User List Panel */
+        .user-list {
+            width: 300px;
+            min-width: 300px; /* Prevent shrinking */
+            background: #FFFFFF;
+            border-right: 1px solid #EDEDED;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0; /* Important: no shrinking */
+        }
+
+        .user-list-search {
+            padding: 10px;
+            border-bottom: 1px solid #EDEDED;
+            background: #F6F6F6;
+        }
+
+            .user-list-search input {
+                width: 100%;
+                padding: 8px 15px;
+                border: none;
+                border-radius: 20px;
+                background: #FFFFFF;
+                font-size: 14px;
+                outline: none;
+                box-shadow: inset 0 0 0 1px #E0E0E0;
+            }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #F0F0F0;
+            cursor: pointer;
+            transition: background 0.2s ease-in-out;
+            color: #333;
+        }
+
+            .user-item:hover {
+                background: #F5F5F5;
+            }
+
+            .user-item.active {
+                background: #E9F6FC;
+            }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: #A0A0A0;
+            margin-right: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .last-message {
+            font-size: 13px;
+            color: #888;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Chat Window Panel */
+        .chat-window {
+            flex-grow: 1;
+            min-width: 400px; /* Prevent from getting too narrow */
+            display: flex;
+            flex-direction: column;
+            background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png') repeat;
+            background-size: 60%;
+            background-color: #ECE5DD;
+            overflow: hidden;
+        }
+
+        /* Chat Header */
+        .chat-header {
+            padding: 15px 20px;
+            background: #075E54;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+            .chat-header .partner-avatar {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background-color: #B0B0B0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                font-weight: bold;
+                font-size: 16px;
+            }
+
+            .chat-header .partner-name {
+                flex-grow: 1;
+            }
+
+            .chat-header .chat-actions {
+                display: flex;
+                gap: 20px;
+                font-size: 20px;
+            }
+
+                .chat-header .chat-actions i {
+                    cursor: pointer;
+                }
+
+        /* Chat Messages Area */
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 0; /* Crucial for flexbox to prevent overflow */
+        }
+
+            .chat-messages li {
+                list-style: none;
+                max-width: 75%;
+                padding: 10px 14px;
+                margin-bottom: 8px;
+                border-radius: 8px;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                white-space: normal;
+                font-size: 15px;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+            }
+
+        /* Self messages (sent by current user) */
+        .self {
+            background: #DCF8C6; /* WhatsApp green */
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+            color: #202c33;
+        }
+
+            .self .message-time {
+                font-size: 11px;
+                color: #999;
+                text-align: right;
+                margin-top: 4px;
+            }
+
+        /* Other messages (received) */
+        .other {
+            background: #FFFFFF; /* White bubble */
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            color: #303030;
+            box-shadow: 0 1px 1.5px rgba(0,0,0,0.1);
+        }
+
+            .other .message-time {
+                font-size: 11px;
+                color: #999;
+                text-align: left;
+                margin-top: 4px;
+            }
+
+        /* Remove old message triangle arrows */
+        .chat-messages li::after {
+            content: none !important;
+        }
+
+        /* Chat Input Area */
+        form.chat-input {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: #F0F0F0;
+            border-top: 1px solid #E0E0E0;
+        }
+
+            form.chat-input .input-icon {
+                font-size: 24px;
+                color: #888;
+                margin: 0 8px;
+                cursor: pointer;
+            }
+
+            form.chat-input input[type="text"] {
+                flex: 1;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 20px;
+                background: #FFFFFF;
+                margin: 0 5px;
+                font-size: 15px;
+                outline: none;
+                box-shadow: inset 0 0 0 1px #E0E0E0;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                white-space: normal;
+            }
+
+            form.chat-input button {
+                background: #075E54;
+                color: white;
+                border: none;
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                font-size: 20px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                margin-left: 5px;
+                transition: background 0.2s;
+            }
+
+                form.chat-input button:hover {
+                    background: #054C43;
+                }
+
+    </style>
+</head>
+<body>
+    <div class="chat-app">
+        <div class="user-list">
+            <div class="user-list-search">
+                <input type="text" placeholder="Search or start new chat" />
+            </div>
+            <div id="userList"></div>
+        </div>
+
+        <div class="chat-window">
+            <div class="chat-header">
+                <div class="partner-avatar" id="partnerAvatar"></div>
+                <div class="partner-name" id="chatTitle">Select a user to chat</div>
+                <div class="chat-actions">
+                    <i class="fas fa-search"></i>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+            </div>
+            <ul class="chat-messages" id="messagesList"></ul>
+
+            <form id="chatForm" method="post" action="/Chat/SendMessage" class="chat-input">
+                <i class="far fa-smile input-icon" id="emojiBtn"></i>
+                <input type="hidden" id="currentPartnerInput" name="partner" value="" />
+                <input type="text" id="messageInput" name="message" placeholder="Type a message" autocomplete="off" />
+                <i class="fas fa-paperclip input-icon"></i>
+                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const users = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+        const currentUser = { Id: @currentUserId };
+        let currentPartner = null;
+
+        const userListElem = document.getElementById('userList');
+        const chatTitleElem = document.getElementById('chatTitle');
+        const messagesList = document.getElementById('messagesList');
+        const messageInput = document.getElementById('messageInput');
+        const partnerAvatarElem = document.getElementById('partnerAvatar');
+        const partnerInputElem = document.getElementById('currentPartnerInput');
+        const chatForm = document.getElementById('chatForm');
+        const emojiBtn = document.getElementById('emojiBtn');
+
+        // SignalR connection setup
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .build();
+
+        connection.on("ReceiveMessage", (fromUserId, toUserId, message, timestamp) => {
+            if (
+                (fromUserId === currentUser.Id && toUserId === currentPartner?.Id) ||
+                (fromUserId === currentPartner?.Id && toUserId === currentUser.Id)
+            ) {
+                appendMessage({
+                    senderId: fromUserId,
+                    messageText: message,
+                    timestamp: timestamp
+                });
+            }
+        });
+
+        connection.start()
+            .then(() => console.log("SignalR connected."))
+            .catch(err => console.error("SignalR connection error:", err));
+
+        function renderUserList() {
+            userListElem.innerHTML = '';
+            const availableUsers = users.filter(u => u.Id !== currentUser.Id);
+
+            availableUsers.forEach(u => {
+                const div = document.createElement('div');
+                div.className = 'user-item';
+
+                const avatar = document.createElement('div');
+                avatar.className = 'user-avatar';
+                avatar.textContent = u.UserName.charAt(0).toUpperCase();
+
+                const userInfo = document.createElement('div');
+                userInfo.className = 'user-info';
+
+                const userName = document.createElement('div');
+                userName.className = 'user-name';
+                userName.textContent = u.UserName;
+
+                const lastMessage = document.createElement('div');
+                lastMessage.className = 'last-message';
+                lastMessage.textContent = 'Tap to chat...';
+
+                userInfo.appendChild(userName);
+                userInfo.appendChild(lastMessage);
+
+                div.appendChild(avatar);
+                div.appendChild(userInfo);
+
+                div.onclick = () => selectUser(u);
+                userListElem.appendChild(div);
+            });
+        }
+
+        function selectUser(selectedUser) {
+            currentPartner = selectedUser;
+            chatTitleElem.textContent = selectedUser.UserName;
+            partnerAvatarElem.textContent = selectedUser.UserName.charAt(0).toUpperCase();
+            messagesList.innerHTML = '';
+            partnerInputElem.value = selectedUser.Id;
+
+            Array.from(userListElem.children).forEach(item => {
+                const userNameDiv = item.querySelector('.user-name');
+                if (userNameDiv) {
+                    item.classList.toggle("active", userNameDiv.textContent === selectedUser.UserName);
+                }
+            });
+
+            fetchMessages();
+        }
+
+        function fetchMessages() {
+            if (!currentPartner || !currentPartner.Id) return;
+
+            fetch('/Chat/GetMessages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ partnerId: currentPartner.Id.toString() })
+            })
+            .then(response => response.json())
+            .then(data => {
+                messagesList.innerHTML = '';
+                data.forEach(msg => {
+                    appendMessage(msg);
+                });
+                scrollMessagesToBottom();
+            })
+            .catch(error => console.error("Error fetching messages:", error));
+        }
+
+        function appendMessage(msg) {
+            const li = document.createElement("li");
+            const time = new Date(msg.timestamp);
+            const timeStr = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const isSelf = msg.senderId === currentUser.Id;
+            li.className = isSelf ? "self" : "other";
+
+            const status = isSelf
+                ? msg.isRead ? "✔✔ Read" : "⌛ Pending"
+                : ""; // Only show status for sent messages
+
+            const nameTag = isSelf ? "You" : (currentPartner ? currentPartner.UserName : "Partner");
+
+            li.innerHTML = `
+                <div class="message-header">
+                    <strong style="font-size: 13px;">${nameTag}</strong>
+                </div>
+                <div class="message-text">${msg.messageText}</div>
+                <div class="message-time">${timeStr} <span style="float:right; font-size: 10px;">${status}</span></div>
+            `;
+
+            messagesList.appendChild(li);
+            scrollMessagesToBottom();
+        }
+
+        function scrollMessagesToBottom() {
+            messagesList.scrollTop = messagesList.scrollHeight;
+        }
+
+        // Insert text at cursor in message input and scroll messages down
+        function insertAtCursor(input, text) {
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            const val = input.value;
+
+            input.value = val.substring(0, start) + text + val.substring(end);
+            input.selectionStart = input.selectionEnd = start + text.length;
+            input.focus();
+
+            // Scroll messages down after insertion (optional)
+            scrollMessagesToBottom();
+        }
+
+        // Example: Emoji button inserts a smile emoji at cursor
+        emojiBtn.addEventListener('click', () => {
+            insertAtCursor(messageInput, "😊 ");
+        });
+
+        // Poll for new messages every 10 seconds
+        setInterval(() => {
+            if(currentPartner){
+                fetchMessages();
+            }
+        }, 10000);
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!messageInput.value.trim() || !currentPartner) return;
+
+            const msg = messageInput.value.trim();
+            fetch('/Chat/SendMessage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    partnerId: currentPartner.Id.toString(),
+                    message: msg
+                })
+            })
+            .then(response => {
+                if(response.ok){
+                    connection.invoke("SendMessage", currentUser.Id, currentPartner.Id, msg)
+                        .catch(err => console.error(err.toString()));
+
+                    // Add message immediately to UI
+                    appendMessage({
+                        senderId: currentUser.Id,
+                        messageText: msg,
+                        timestamp: new Date().toISOString(),
+                        isRead: false
+                    });
+                    messageInput.value = '';
+                } else {
+                    alert('Failed to send message.');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Error sending message.');
+            });
+        });
+
+        // Initialize UI
+        renderUserList();
+    </script>
+</body>
+</html>
