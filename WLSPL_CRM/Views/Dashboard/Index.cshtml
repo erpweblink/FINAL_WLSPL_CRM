@@ -6,21 +6,419 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
+@* Updated Code with new CSS *@
+
+@* New CSS by Nikhil *@
 <style>
-    /* Reset and base styles */
-    /*     * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+    :root {
+        --card-bg-light: rgba(255, 255, 255, 0.9);
+        --card-bg-dark: rgba(32, 34, 33, 0.9);
+        --border-radius: 14px;
+        --glass-blur: 12px;
+        --transition-speed: 0.3s;
+        --dept-color: #9C27B0;
+        --manager-color: #FFC107;
+        --team-lead-color: #009688;
+        --executive-color: #4CAF50;
+    }
+
+    .tree {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 20px;
+    }
+
+    .level {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin: 17px 0;
+        gap: 13px;
+    }
+
+    .department-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        margin: 0 10px;
+    }
+
+    .node {
+        background: var(--card-bg-light);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: var(--border-radius);
+        padding: 14px 12px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        transition: all var(--transition-speed) ease;
+        cursor: pointer;
+        min-width: 150px;
+        max-width: 250px;
+        color: #111;
+    }
+
+        .node:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            padding: 20px;
-            min-height: 100vh;
-        } */
+    [data-bs-theme="dark"] .node {
+        background: rgb(5 6 5 / 90%);
+        color: #eee;
+        border: 1px solid rgb(233 20 20 / 78%);
+        box-shadow: 0 4px 10px rgb(255 255 255 / 32%);
+    }
 
+    .node strong {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: inherit;
+    }
+
+    .node small {
+        font-size: 0.9rem;
+        color: #555;
+        transition: color var(--transition-speed);
+    }
+
+    [data-bs-theme="dark"] .node small {
+        color: #bbb;
+    }
+    .node[data-role="admin"] {
+        border-left: 5px solid #FF5722;
+    }
+
+    .node[data-role="sub-admin"] {
+        border-left: 5px solid #2196F3;
+    }
+
+    .node[data-role="department"] {
+        border-left: 5px solid var(--dept-color);
+    }
+
+    .node[data-role="manager"] {
+        border-left: 5px solid var(--manager-color);
+    }
+
+    .node[data-role="team-lead"] {
+        border-left: 5px solid var(--team-lead-color);
+    }
+
+    .node[data-role="executive"] {
+        border-left: 5px solid var(--executive-color);
+    }
+    .connector {
+        position: absolute;
+        background-color: #333;
+        z-index: 1;
+    }
+
+    .manager-connector, .manager-vertical-connector {
+        width: 4px;
+        background: var(--dept-color);
+        height: 30px;
+        margin: 0 auto;
+    }
+
+    .manager-vertical-connector {
+        background: var(--manager-color);
+    }
+
+    .tl-vertical-connector {
+        width: 3px;
+        height: 33px;
+        background: var(--team-lead-color);
+        margin: 10px auto 0;
+    }
+
+    .executive-connector {
+        width: 2px;
+        height: 10px;
+        background: var(--executive-color);
+        margin: 5px auto;
+    }
+
+    .dept-horizontal-line, .tl-horizontal-line {
+        height: 4px;
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .dept-horizontal-line {
+        background-color: var(--dept-color);
+    }
+
+    .manager-container,
+    .manager-connector,
+    .dept-horizontal-line,
+    .tl-horizontal-container,
+    .manager-vertical-connector,
+    .executive-container,
+    .tl-vertical-connector {
+        display: none;
+    }
+
+    @@media (max-width: 768px) {
+        .tree, .level {
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .department-wrapper, .manager-block, .tl-column {
+            width: 95%; 
+        }
+
+        .node {
+            width: 100%;
+            min-width: unset;
+            max-width: unset;
+        }
+      
+        .manager-container, .tl-row {
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .dept-horizontal-line, .tl-horizontal-line {
+            display: none !important;
+        }
+    }
+</style>
+
+
+@functions {
+    private IHtmlContent RenderDepartments(IEnumerable<UserViewModel> managers)
+    {
+        var html = new HtmlContentBuilder();
+        var groupedDepartments = managers.GroupBy(m => m.Department).ToList();
+
+        html.AppendHtml("<div class='level'>");
+
+        foreach (var departmentGroup in groupedDepartments)
+        {
+            string deptName = departmentGroup.Key;
+            string deptId = $"dept-{deptName.Replace(" ", "-").ToLower()}";
+
+            html.AppendHtml("<div class='department-wrapper'>");
+            html.AppendHtml($@"
+    <div class='node' data-role='department' onclick='toggleSection(this, ""dept"")' data-id='{deptId}'>
+    <div><strong style='font-size:18px;'>{deptName}</strong></div>
+    </div>
+    ");
+
+            html.AppendHtml($"<div class='manager-connector' data-id='{deptId}'></div>");
+            html.AppendHtml($"<div class='dept-horizontal-line' data-id='{deptId}'></div>");
+            html.AppendHtml($"<div class='manager-container' data-id='{deptId}'>");
+
+            foreach (var manager in departmentGroup)
+            {
+                string managerId = manager.ID.ToString();
+                var teamLeads = manager.Children.Where(c => c.Role.Contains("Team Lead") || c.Role.Contains("Lead") || c.Role.Contains("Supervisor")).ToList();
+                var directReportsCount = manager.Children.Count;
+                var countLabel = teamLeads.Any() ? $"Team Leads: {teamLeads.Count}" : $"Team: {directReportsCount}";
+
+                html.AppendHtml($@"
+    <div class='manager-block'>
+    <div class='node' data-role='manager' onclick='toggleSection(this, ""manager"")' data-id='{managerId}' title='{manager.Role} - {manager.Department}'>
+    <div><strong>{manager.FirstName} {manager.LastName}</strong></div>
+    <small>({manager.Role})</small>
+    <small>{countLabel}</small>
+    </div>
+    <div class='manager-vertical-connector' data-id='{managerId}'></div>
+    <div class='tl-horizontal-container' data-id='{managerId}'>
+    <div class='tl-horizontal-line'></div>
+    <div class='tl-row'>
+    ");
+
+                if (teamLeads.Any())
+                {
+                    foreach (var tl in teamLeads)
+                    {
+                        var execs = tl.Children.Where(c => c.Role.Contains("Executive")).ToList();
+                        html.AppendHtml($@"
+    <div class='tl-column'>
+    <div class='node' data-role='team-lead' onclick='toggleSection(this, ""team-lead"")' data-id='{tl.ID}'>
+    <div><strong>{tl.FirstName} {tl.LastName}</strong></div>
+    <small>{tl.Role}</small>
+    <small style='font-size: 12px; color: gray;'>Team: {execs.Count}</small>
+    </div>
+    <div class='tl-vertical-connector' data-id='{tl.ID}'></div>
+    <div class='executive-container' data-id='{tl.ID}'>
+    ");
+
+                        if (execs.Any())
+                        {
+                            foreach (var exec in execs)
+                            {
+                                html.AppendHtml($@"
+    <div class='node' data-role='executive'>
+    <div><strong>{exec.FirstName} {exec.LastName}</strong></div>
+    <small>{exec.Role}</small>
+    </div>
+    ");
+                            }
+                        }
+                        else
+                        {
+                            html.AppendHtml("<div class='node' data-role='executive' style='background:#eee;'><div><small>No team members</small></div></div>");
+                        }
+                        html.AppendHtml("</div></div>");
+                    }
+                }
+                else
+                {
+                    foreach (var exec in manager.Children)
+                    {
+                        html.AppendHtml($@"
+    <div class='tl-column'>
+    <div class='node' data-role='executive'>
+    <div><strong>{exec.FirstName} {exec.LastName}</strong></div>
+    <small>{exec.Role}</small>
+    </div>
+    </div>
+    ");
+                    }
+                }
+                html.AppendHtml("</div></div></div>");
+            }
+            html.AppendHtml("</div></div>");
+        }
+        html.AppendHtml("</div>");
+        return html;
+    }
+}
+<div class="tree">
+    <div class="level">
+        <div class="node" data-role="admin">
+            <div><strong>@Model.FirstName @Model.LastName</strong></div>
+            <small>@Model.Role</small>
+        </div>
+    </div>
+
+    @{
+        var subAdmin = Model.Children.FirstOrDefault(c => c.Role == "Sub Admin");
+    }
+    @if (subAdmin != null)
+    {
+        <div class="level">
+            <div class="node" data-role="sub-admin">
+                <div><strong>@subAdmin.FirstName @subAdmin.LastName</strong></div>
+                <small>@subAdmin.Role</small>
+            </div>
+        </div>
+
+        @RenderDepartments(subAdmin.Children.Where(c =>
+        c.Role.Contains("Manager") ||
+        c.Role.Contains("Department") ||
+        c.Role.Contains("Director") ||
+        c.Role.Contains("Head")).ToList())
+        }
+</div>
+@section Scripts {
+    <script>
+        // Main toggle function
+        function toggleSection(node, role) {
+            const id = node.getAttribute('data-id');
+            const isMobile = window.innerWidth <= 768;
+
+            let targetContainer, connector, horizontalLine;
+
+            switch (role) {
+                case 'dept':
+                    targetContainer = document.querySelector(`.manager-container[data-id="${id}"]`);
+                    connector = document.querySelector(`.manager-connector[data-id="${id}"]`);
+                    horizontalLine = document.querySelector(`.dept-horizontal-line[data-id="${id}"]`);
+                    break;
+                case 'manager':
+                    targetContainer = document.querySelector(`.tl-horizontal-container[data-id="${id}"]`);
+                    connector = document.querySelector(`.manager-vertical-connector[data-id="${id}"]`);
+                    horizontalLine = document.querySelector(`.tl-horizontal-line[data-id="${id}"]`);
+                    break;
+                case 'team-lead':
+                    targetContainer = document.querySelector(`.executive-container[data-id="${id}"]`);
+                    connector = document.querySelector(`.tl-vertical-connector[data-id="${id}"]`);
+                    break;
+            }
+
+            if (!targetContainer) return;
+
+            const isVisible = targetContainer.style.display === 'flex';
+
+            targetContainer.style.display = isVisible ? 'none' : 'flex';
+
+            if (connector) {
+                connector.style.display = isVisible ? 'none' : 'block';
+            }
+
+            if (horizontalLine) {
+                if (isMobile) {
+                    horizontalLine.style.display = 'none';
+                } else {
+                    horizontalLine.style.display = isVisible ? 'none' : 'block';
+                }
+            }
+
+            if (isVisible) {
+                targetContainer.querySelectorAll('.manager-container, .tl-horizontal-container, .executive-container').forEach(el => {
+                    el.style.display = 'none';
+                });
+                targetContainer.querySelectorAll('.connector').forEach(el => el.style.display = 'none');
+            }
+        }
+
+        function adjustLineLengths() {
+            if (window.innerWidth <= 768) {
+                document.querySelectorAll('.dept-horizontal-line, .tl-horizontal-line').forEach(line => line.style.display = 'none');
+                return;
+            }
+
+            const departments = document.querySelectorAll('.department-wrapper');
+            departments.forEach(dept => {
+                const deptLine = dept.querySelector('.dept-horizontal-line');
+                const managers = dept.querySelectorAll('.manager-block');
+                if (deptLine && managers.length > 0) {
+                    const width = (managers.length * 150) + ((managers.length - 1) * 34);
+                    deptLine.style.width = `${width}px`;
+                }
+            });
+
+            const tlContainers = document.querySelectorAll('.tl-horizontal-container');
+            tlContainers.forEach(tlContainer => {
+                const tlLine = tlContainer.querySelector('.tl-horizontal-line');
+                const tlColumns = tlContainer.querySelectorAll('.tl-column');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            adjustLineLengths();
+            window.addEventListener('resize', adjustLineLengths);
+            if (window.innerWidth <= 768) {
+                document.querySelectorAll('.manager-container, .tl-horizontal-container, .executive-container').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }
+        });
+    </script>
+}
+
+
+
+@* OLD Code with basic css *@
+@* <style>
     /* Main tree container */
     .tree {
         display: flex;
@@ -300,14 +698,6 @@
         box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
         background-color: #202221 !important;
     }
-    /*  [data-bs-theme="dark"] .welcome-text h3 {
-            color: black !important;
-        } */
-    /*  [data-bs-theme="dark"] .container-xxl #topbar-custom {
-            background-color: var(--bs-body-bg) !important;
-             transition: .3s !important;
-        } */
-
 </style>
 
 @functions {
@@ -651,5 +1041,5 @@
             }
         });
     </script>
-}
+} *@
 
