@@ -13,6 +13,18 @@ namespace WLSPL_CRM.Controllers
             _logger = logger;
         }
 
+        [HttpPost]
+        public IActionResult Search(string query)
+        {
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                string[] values =  query.Split(',');
+
+            }
+            return Json("Hello");
+        }
+
+
         public IActionResult Index()
         {
             return View();

@@ -1,15 +1,8 @@
-﻿using System;
-using System.Data;
-using System.Net;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
+using System.Data;
 using WLSPL_CRM.Models;
 using WLSPL_CRM_2.Models;
-using static System.Net.Mime.MediaTypeNames;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WLSPL_CRM_2.repository
 {

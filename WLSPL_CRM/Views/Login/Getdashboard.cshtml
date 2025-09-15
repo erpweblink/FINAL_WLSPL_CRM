@@ -37,10 +37,7 @@
 				<div class="row align-items-center">
 					<div class="col-auto">
 						<h4 class="card-title">User List </h4>
-					</div><!--end col-->
-			@* 		<div class="col-auto">
-						<input type="text" class="form-control" placeholder="Enter Department" id="departmentName" />
-					</div> *@
+					</div>
 					<div class="col-auto ms-auto">
 						<button type="button" id="btnShowNotification" onclick="CheckPending()" class="btn btn-link position-relative p-0 border-0">
 							<i class="fas fa-bell" style="font-size: 30px; color: #0755A1;"></i>
@@ -78,12 +75,11 @@
 									<td>@user.Department</td>
 									<td>@user.Role</td>
 									<td>
-										<button type="button" class="btn btn-warning"
+										<button type="button" class="btn btn-success btn-sm"
 												data-bs-toggle="modal" data-bs-target="#editUserModal"
 												onclick="populateModal(@user.ID, '@user.UserName', '@user.EmailId', '@user.MobileNo', '@user.Department', '@user.Role','@((@user.IsApproved ?? true).ToString().ToLower())','@((@user.IsActive ?? true).ToString().ToLower())','@user.RelationID')">
-											Edit
+											<i class="fa fa-edit"></i>
 										</button>
-										@*  <a href="@Url.Action("Edit", "User", new { id = user.ID })" class="btn btn-primary btn-sm">Edit</a> *@
 									</td>
 								</tr>
 							}

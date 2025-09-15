@@ -23,46 +23,41 @@ namespace WLSPL_CRM_2.Controllers
 
                 if (!string.IsNullOrEmpty(companysJson))
                 {
-
                     var company = JsonConvert.DeserializeObject<Company>(companysJson);
                     ViewBag.company = company;
                     var companyList = new List<Company> { company };
                     ViewBag.SupplyTypes = new List<SelectListItem>
-            {
-            new SelectListItem { Text = "B2B", Value = "B2B" },
-            new SelectListItem { Text = "B2C", Value = "B2C" },
-            new SelectListItem { Text = "SEZWOP", Value = "SEZWOP" },
-            new SelectListItem { Text = "EXPWOP", Value = "EXPWOP" }
-              };
+                        {
+                        new SelectListItem { Text = "B2B", Value = "B2B" },
+                        new SelectListItem { Text = "B2C", Value = "B2C" },
+                        new SelectListItem { Text = "SEZWOP", Value = "SEZWOP" },
+                        new SelectListItem { Text = "EXPWOP", Value = "EXPWOP" }
+                          };
 
                     ViewBag.RegisterForList = new List<SelectListItem>
-    {
-        new SelectListItem { Text = "WLS", Value = "WLS" },
-        new SelectListItem { Text = "WLSPL", Value = "WLSPL" }
-    };
+                        {
+                            new SelectListItem { Text = "WLS", Value = "WLS" },
+                            new SelectListItem { Text = "WLSPL", Value = "WLSPL" }
+                        };
 
-                    ViewBag.SelectedSupplyType = company.supplytype;
+                    //ViewBag.SelectedSupplyType = company.supplytype;
 
                     return View(companyList);
                 }
                 else
                 {
                     string action = "GetCompanycode";
-                    var compcode = await _companymaster.Getcompcode(action);
-                    var code = compcode.FirstOrDefault()?.CompanyCode ?? string.Empty;
-                    ViewBag.code = code;
+                    string compcode = await _companymaster.Getcompcode(action);
+                    ViewBag.code = compcode;
                     return View();
 
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 throw;
             }
-
-
-
         }
         [HttpPost]
         public async Task<IActionResult> SubmitDeatils(Company Model)
@@ -70,20 +65,38 @@ namespace WLSPL_CRM_2.Controllers
             try
             {
                 string userName = HttpContext.Session.GetString("userName");
-                Model.CreatedBy = userName;
-                var result = await _companymaster.SubmitDetails(Model, Action: "Insert");
-                if (result != null)
+                if (string.IsNullOrEmpty(userName))
                 {
-
-                    TempData["Save_Record"] = "Save_Record";
-                    return RedirectToAction("Index", "Alert");
+                    TempData["Save_Record"] = "User session expired. Please log in again.";
+                    TempData["URL"] = "/Login/Account";
+                    TempData["icon"] = "error";
+                    TempData["Time"] = "2000";
+                    return RedirectToAction("IndexLogin", "Alert");
                 }
-
-                return View();
+                else
+                {
+                    Model.CreatedBy = userName;
+                    var result = await _companymaster.SubmitDetails(Model, Action: "Insert");
+                    if (!string.IsNullOrEmpty(result.ToString()))
+                    {
+                        TempData["Save_Record"] = "Company Created Successfully.";
+                        TempData["URL"] = "/Company/Getlist";
+                        TempData["icon"] = "success";
+                        TempData["Time"] = "2000";
+                        return RedirectToAction("IndexLogin", "Alert");
+                    }
+                    else
+                    {
+                        TempData["Save_Record"] = "Something went wrong..";
+                        TempData["URL"] = "/Company/Getlist";
+                        TempData["icon"] = "error";
+                        TempData["Time"] = "2000";
+                        return RedirectToAction("IndexLogin", "Alert");
+                    }
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 return View("Error");
             }
         }
@@ -102,8 +115,9 @@ namespace WLSPL_CRM_2.Controllers
                 return Json("Non Valid");
             }
         }
-        public async Task<ActionResult> Getlist(Company model)
+        public async Task<ActionResult> Getlist()
         {
+            Company model = new Company();
             string action = "GETCOMPANYRECORD";
             var companies = await _companymaster.GetLeadlist(action, model);
             return View(companies);
@@ -128,17 +142,32 @@ namespace WLSPL_CRM_2.Controllers
             string userName = HttpContext.Session.GetString("userName");
             if (string.IsNullOrEmpty(userName))
             {
-
-                TempData["Error"] = "User session expired. Please log in again.";
-                return RedirectToAction("Login", "Account");
+                TempData["Save_Record"] = "User session expired. Please log in again.";
+                TempData["URL"] = "/Login/Account";
+                TempData["icon"] = "error";
+                TempData["Time"] = "2000";
+                return RedirectToAction("IndexLogin", "Alert");
             }
-            var result = await _companymaster.DeleteReord(ID, CreatedBy: userName);
-            if (result != null)
+            else
             {
-                TempData["Save_Record"] = "Record saved successfully!";
-                return RedirectToAction("Index", "Alert");
+                var result = await _companymaster.DeleteReord(ID, userName);
+                if (!string.IsNullOrEmpty(result.ToString()))
+                {
+                    TempData["Save_Record"] = "Record Deleted successfully!";
+                    TempData["URL"] = "/Company/Getlist";
+                    TempData["icon"] = "error";
+                    TempData["Time"] = "2000";
+                    return RedirectToAction("IndexLogin", "Alert");
+                }
+                else
+                {
+                    TempData["Save_Record"] = "Something went wrong..";
+                    TempData["URL"] = "/Company/Getlist";
+                    TempData["icon"] = "error";
+                    TempData["Time"] = "2000";
+                    return RedirectToAction("IndexLogin", "Alert");
+                }
             }
-            return View();
         }
         [HttpPost]
         public async Task<IActionResult> UpdateDeatils(Company Model)
@@ -146,18 +175,37 @@ namespace WLSPL_CRM_2.Controllers
             try
             {
                 string userName = HttpContext.Session.GetString("userName");
-                Model.CreatedBy = userName;
-                var result = await _companymaster.SubmitDetails(Model, Action: "Update");
-                if (result != null)
+                if (string.IsNullOrEmpty(userName))
                 {
-
-                    TempData["Save_Record"] = "Save_Record";
-                    return RedirectToAction("Index", "Alert");
+                    TempData["Save_Record"] = "User session expired. Please log in again.";
+                    TempData["URL"] = "/Login/Account";
+                    TempData["icon"] = "error";
+                    TempData["Time"] = "2000";
+                    return RedirectToAction("IndexLogin", "Alert");
                 }
-
-                return View();
+                else
+                {
+                    Model.CreatedBy = userName;
+                    var result = await _companymaster.SubmitDetails(Model, Action: "Update");
+                    if (!string.IsNullOrEmpty(result.ToString()))
+                    {
+                        TempData["Save_Record"] = "Company Updated Successfully.";
+                        TempData["URL"] = "/Company/Getlist";
+                        TempData["icon"] = "success";
+                        TempData["Time"] = "2000";
+                        return RedirectToAction("IndexLogin", "Alert");
+                    }
+                    else
+                    {
+                        TempData["Save_Record"] = "Something went wrong..";
+                        TempData["URL"] = "/Company/Getlist";
+                        TempData["icon"] = "error";
+                        TempData["Time"] = "2000";
+                        return RedirectToAction("IndexLogin", "Alert");
+                    }
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 return View("Error");
