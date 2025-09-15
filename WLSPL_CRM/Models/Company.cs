@@ -9,6 +9,8 @@
 
         public string? CompanyCode { get; set; }  
 
+        public string? vendorCode { get; set; }  
+
         public string? supplytype { get; set; }  
 
         public string? OwnerName { get; set; }  

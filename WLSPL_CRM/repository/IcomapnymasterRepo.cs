@@ -4,7 +4,7 @@ namespace WLSPL_CRM_2.repository
 {
     public interface IcomapnymasterRepo
     {
-        Task<List<Company>> Getcompcode(string Action);
+        Task<string> Getcompcode(string Action);
 
         Task<int> SubmitDetails(Company Model, string Action);
 

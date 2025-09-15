@@ -47,10 +47,10 @@
 											<td>@user.Role</td>
 											<td>@user.Department</td>
 											<td>
-												<button type="button" class="btn btn-warning"
+												<button type="button" class="btn btn-success btn-sm"
 														data-bs-toggle="modal" data-bs-target="#editUserModal"
 														onclick="populateModal(@user.ID, '@user.UserName','@user.FirstName','@user.MiddleName','@user.LastName', '@user.EmailId', '@user.MobileNo', '@user.Department', '@user.Role', '@((@user.IsApproved ?? true).ToString().ToLower())','@((@user.IsActive ?? true).ToString().ToLower())')">
-													Edit
+													<i class="fa fa-edit"></i>
 												</button>
 											</td>
 										</tr>
