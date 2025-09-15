@@ -14,6 +14,10 @@
     int srNo = 1;
 }
 
+<link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
+<link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
+<script src="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.js"></script>
+<script src="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.js"></script>
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -39,7 +43,7 @@
                     <div class="card-body pt-0">
                         <form method="post" asp-action="DeleteLead">
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table" id="LeadList">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Sr. No.</th>
@@ -146,7 +150,16 @@
 
 
 @section Scripts {
-
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dataTable = new DataTable("#LeadList", {
+                searchable: true,
+                fixedHeight: true,
+                 perPage: 10,
+                perPageSelect: [10, 50, 75, 100, 1000]
+            });
+        });
+    </script>
 
     <script>
 

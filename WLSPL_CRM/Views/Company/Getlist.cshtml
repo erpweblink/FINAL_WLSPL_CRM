@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Getlist";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    int srNo = 1;
 }
 
 <link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
@@ -32,6 +33,7 @@
                         <table class="table" id="companyTable">
                             <thead class="table-light">
                                 <tr>
+                                    <th>Sr.No.</th>
                                     <th>company code</th>
                                     <th>Company Name</th>
                                     <th>GST Number</th>
@@ -43,6 +45,7 @@
                                 @foreach (var company in Model)
                                 {
                                     <tr>
+                                        <td>@srNo</td>
                                         <td>@company.CompanyCode</td>
                                         <td>@company.CompanyName</td>
                                         <td>@company.GSTNo</td>
@@ -61,6 +64,7 @@
                                         </td>
 
                                     </tr>
+                                    srNo++;
                                 }
                             </tbody>
                         </table>
@@ -76,6 +80,8 @@
         const dataTable = new DataTable("#companyTable", {
             searchable: true,
             fixedHeight: true,
+             perPage: 10,
+            perPageSelect: [10, 50, 75, 100, 1000]
         });
     });
 </script>

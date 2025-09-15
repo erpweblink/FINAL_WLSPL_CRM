@@ -145,7 +145,7 @@ namespace WLSPL_CRM_2.Controllers
 
                 return View();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 return View("Error");

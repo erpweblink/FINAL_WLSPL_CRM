@@ -4,19 +4,15 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-    <link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
-    <link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
+
+<link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
+<link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
+<script src="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.js"></script>
+<script src="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.js"></script>
 
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            @* <div class="card-header">
-            <div class="row align-items-center">
-            <div class="col">
-            <h4 class="card-title">Add Company</h4>
-            </div>
-            </div>
-            </div> *@
             <div class="card-body pt-0">
 
                 <div class="card">
@@ -40,7 +36,7 @@
                     <div class="card-body pt-0">
                         <form method="post" asp-action="DeleteLead">
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table" id="QuotaList">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Sr.No</th>
@@ -201,5 +197,14 @@
     </div>
 </div>
 
-
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dataTable = new DataTable("#QuotaList", {
+            searchable: true,
+            fixedHeight: true,
+             perPage: 10,
+            perPageSelect: [10, 50, 75, 100, 1000]
+        });
+    });
+</script>
 
