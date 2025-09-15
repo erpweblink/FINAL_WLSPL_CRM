@@ -5,32 +5,13 @@
 }
 
 
-<!DOCTYPE html>
-<html lang="en" dir="ltr" data-startbar="light" data-bs-theme="light">
+<link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
+<link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
 
-<!-- Mirrored from mannatthemes.com/rizz/default/tables-editable.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 26 Oct 2024 09:38:22 GMT -->
-<head>
-
-    <link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
-    <link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
-    <!-- App css -->
-    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" />
-
-
-</head>
 
 <div class="row">
     <div class="col-md-12">
         <div class="card">
-            @* <div class="card-header">
-            <div class="row align-items-center">
-            <div class="col">
-            <h4 class="card-title">Add Company</h4>
-            </div>
-            </div>
-            </div> *@
             <div class="card-body pt-0">
 
                 <div class="card">
@@ -39,7 +20,7 @@
                             <div class="col-auto">
                                 <h4 class="card-title"> Work-Order List </h4>
                             </div><!--end col-->
-                          <!--end col-->
+                            <!--end col-->
                         </div>  <!--end row-->
                     </div><!--end card-header-->
                     <div class="card-body pt-0">
@@ -71,7 +52,7 @@
                                                         <i class="fas fa-pencil-alt"></i>
                                                     </a>
                                                     &nbsp;
-                                                    <a href="@Url.Action("Deleteworkorder", "Workorder",new { id = WO.ID })" class="btn btn-danger btn-sm" title="Delete">
+                                                    <a href="@Url.Action("Deleteworkorder", "Workorder", new { id = WO.ID })" class="btn btn-danger btn-sm" title="Delete">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </a>
 
@@ -209,11 +190,5 @@
     </div>
 </div>
 
-<script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="~/assets/libs/simplebar/simplebar.min.js"></script>
-<script src="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.js"></script>
-<script src="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.js"></script>
-<script src="~/assets/js/pages/editable.init.js"></script>
-<script src="~/assets/js/app.js"></script>
 
 

@@ -49,20 +49,6 @@ namespace WLSPL_CRM_2.repository
         }
         public async Task<dynamic> GetcompanybyId(string Id)
         {
-            //using (var connection = new SqlConnection(_configuration.GetConnectionString("Conn_String")))
-            //{
-            //    await connection.OpenAsync();
-            //    var parameters = new DynamicParameters();
-            //    parameters.Add("@id", Id);
-            //    parameters.Add("@Action", "Getcomapnybyid");
-            //    var result = await connection.QueryFirstOrDefaultAsync<Company>(
-            //        "SP_companymaster",
-            //        parameters,
-            //        commandType: CommandType.StoredProcedure);
-
-            //    return result;
-            //}
-
             try
             {
                 using var connection = new SqlConnection(_configuration.GetConnectionString("Conn_String"));
@@ -78,7 +64,7 @@ namespace WLSPL_CRM_2.repository
                     commandType: CommandType.StoredProcedure);
 
                 if (data == null)
-                    return null;
+                    return new Company();
 
                 var company = new Company
                 {
@@ -106,7 +92,8 @@ namespace WLSPL_CRM_2.repository
                     UpdatedOn = data.UpdatedOn,
                     DeletedOn = data.DeletedOn,
                     DeletedBy = data.DeletedBy,
-                    AreaNAme = data.AreaNAme // spelling in DB?
+                    AreaNAme = data.AreaNAme, // spelling in DB?
+                    vendorCode = data.vendorCode 
                 };
 
                 void AddContact(string? name, string? mobile, string? email, string? designation)
@@ -134,29 +121,33 @@ namespace WLSPL_CRM_2.repository
 
                 return company;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                // Consider logging ex here
                 throw;
             }
-
-
-
         }
-        public async Task<List<Company>> Getcompcode(string Action)
+        public async Task<string> Getcompcode(string Action)
         {
-            using (var connection = new SqlConnection(_configuration.GetConnectionString("Conn_String")))
+            try
             {
-                await connection.OpenAsync();
-                var parameters = new DynamicParameters();
-                parameters.Add("@Action", Action);
-                var result = await connection.QueryAsync<Company>(
-                    "SP_Lead",
-                    parameters,
-                    commandType: CommandType.StoredProcedure
-                );
-                return result.ToList();
+                using (var connection = new SqlConnection(_configuration.GetConnectionString("Conn_String")))
+                {
+                    await connection.OpenAsync();
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Action", Action);
+                    var result = await connection.QueryFirstOrDefaultAsync<string>(
+                        "SP_companymaster",
+                        parameters,
+                        commandType: CommandType.StoredProcedure
+                    );
+                    return result.ToString();
+                }
             }
+            catch (Exception)
+            {
+                throw;
+            }
+           
         }
         public async Task<List<Company>> GetLeadlist(string Action, Company Model)
         {
@@ -196,6 +187,7 @@ namespace WLSPL_CRM_2.repository
                     //parameters.Add("@Designation", Model.Designation1);
                     parameters.Add("@BillStateCode", Model.BillStateCode);
                     parameters.Add("@ShippStateCode", Model.ShippStateCode);
+                    parameters.Add("@vendorCode", Model.vendorCode);
                     parameters.Add("@BillAddress", Model.BillingAddress);
                     parameters.Add("@shippaddress", Model.ShippingAddress);
                     //parameters.Add("@EmailID", Model.EmailID);
@@ -232,7 +224,7 @@ namespace WLSPL_CRM_2.repository
                             parameters.Add("Name2", second.Name);
                         }
 
-                        // Third Contact (optional – example)
+                        // Third Contact 
                         if (Model.Contacts.Count >= 3)
                         {
                             var third = Model.Contacts[2];
@@ -241,23 +233,36 @@ namespace WLSPL_CRM_2.repository
                             parameters.Add("@Designation3", third.Designation);
                             parameters.Add("@Name3", third.Name);
                         }
+                        //Fourth Contact
+                        if (Model.Contacts.Count >= 3)
+                        {
+                            var third = Model.Contacts[2];
+                            parameters.Add("@EmailID4", third.EmailID);
+                            parameters.Add("@MobileNo4", third.MobileNo);
+                            parameters.Add("@Designation4", third.Designation);
+                            parameters.Add("@Name4", third.Name);
+                        }
+                        // Fifth Contact
+                        if (Model.Contacts.Count >= 3)
+                        {
+                            var third = Model.Contacts[2];
+                            parameters.Add("@EmailID5", third.EmailID);
+                            parameters.Add("@MobileNo5", third.MobileNo);
+                            parameters.Add("@Designation5", third.Designation);
+                            parameters.Add("@Name5", third.Name);
+                        }
                     }
 
-
-
-
-
                     parameters.Add("@Action", Action);
-                    //parameters.Add("@Createdby", Model.Createdby);
+                    parameters.Add("@CreatedBy", Model.CreatedBy);
                     parameters.Add("@Result", dbType: DbType.Int32, direction: ParameterDirection.Output);
                     await connection.ExecuteAsync("SP_companymaster", parameters, commandType: CommandType.StoredProcedure);
                     int isSuccess = parameters.Get<int>("@Result");
                     return isSuccess;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
