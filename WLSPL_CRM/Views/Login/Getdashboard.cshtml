@@ -3,15 +3,14 @@
 @{
 	ViewData["Title"] = "Getdashboard";
 	Layout = "~/Views/Shared/_Layout.cshtml";
+	int srNo = 1;
 }
 
 <link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
 <link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
-<!-- App css -->
-<link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-<link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.js"></script>
+<script src="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.js"></script>
 <script>
 	function CheckPending(){
 		var count = @Model.Info.pendingCount
@@ -50,9 +49,10 @@
 			</div><!--end card-header-->
 			<div class="card-body pt-0">
 				<div class="table-responsive">
-					<table class="table">
+					<table class="table" id="UserMaster">
 						<thead class="table-light">
 							<tr>
+								<th>Sr.No.</th>
 								<th>First Name</th>
 								<th>Last Name</th>
 								<th>User Name</th>
@@ -67,6 +67,7 @@
 							@foreach (var user in Model.USer)
 							{
 								<tr>
+									<td>@srNo</td>
 									<td>@user.FirstName</td>
 									<td>@user.LastName</td>
 									<td>@user.UserName</td>
@@ -82,6 +83,7 @@
 										</button>
 									</td>
 								</tr>
+								srNo++;
 							}
 						</tbody>
 					</table>
@@ -200,7 +202,16 @@
 		</div><!--end card-->
 	</div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		const dataTable = new DataTable("#UserMaster", {
+			searchable: true,
+			fixedHeight: true,
+			 perPage: 10,
+			perPageSelect: [10, 50, 75, 100, 1000]
+		});
+	});
+</script>
 <script>
 	function populateModal(userId, userName, userEmail, userMobile, Department, userRole, isApproved, isActivate,RelationID) {
 		debugger;

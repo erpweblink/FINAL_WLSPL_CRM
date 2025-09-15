@@ -7,6 +7,8 @@
 
 <link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
 <link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
+<script src="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.js"></script>
+<script src="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.js"></script>
 
 
 <div class="row">
@@ -19,14 +21,13 @@
                         <div class="row align-items-center">
                             <div class="col-auto">
                                 <h4 class="card-title"> Work-Order List </h4>
-                            </div><!--end col-->
-                            <!--end col-->
-                        </div>  <!--end row-->
-                    </div><!--end card-header-->
+                            </div>
+                        </div>  
+                    </div>
                     <div class="card-body pt-0">
                         <form method="post" asp-action="DeleteLead">
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table" id="WorkOrdList">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Sr.No</th>
@@ -190,5 +191,14 @@
     </div>
 </div>
 
-
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dataTable = new DataTable("#WorkOrdList", {
+            searchable: true,
+            fixedHeight: true,
+             perPage: 10,
+            perPageSelect: [10, 50, 75, 100, 1000]
+        });
+    });
+</script>
 

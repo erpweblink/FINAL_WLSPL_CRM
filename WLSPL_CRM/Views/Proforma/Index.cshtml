@@ -5,14 +5,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
 <link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
 <link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
-<!-- App css -->
-<link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-<link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" />
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+<script src="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.js"></script>
+<script src="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.js"></script>
 <div class="row">
     <div class="col-md-12">
         <div class="card">
@@ -23,23 +20,20 @@
                         <div class="row align-items-center">
                             <div class="col-auto">
                                 <h4 class="card-title"> Proforma List </h4>
-                            </div><!--end col-->
+                            </div>
                             <div class="col-auto ms-auto">
-
-                                @*<span class="text-primary fw-semibold">Note :</span><span class="text-primary fw-normal"> if you want to data edit do double click on a table row.</span> *@
                                 <a class="btn btn-primary" asp-controller="Proforma" asp-action="Create">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text"> +Add Proforma </span>
                                     </div>
                                 </a>
-
-                            </div><!--end col-->
-                        </div>  <!--end row-->
-                    </div><!--end card-header-->
+                            </div>
+                        </div>  
+                    </div>
                     <div class="card-body pt-0">
                         <form method="post" asp-action="DeleteLead">
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table" id="ProfList">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Sr.No</th>
@@ -84,3 +78,13 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dataTable = new DataTable("#ProfList", {
+            searchable: true,
+            fixedHeight: true,
+             perPage: 10,
+            perPageSelect: [10, 50, 75, 100, 1000]
+        });
+    });
+</script>
