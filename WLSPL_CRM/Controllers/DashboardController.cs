@@ -14,7 +14,6 @@ namespace WLSPL_CRM_2.Controllers
         {
             _Repo = Repo;
         }
-
         public async Task<IActionResult> Index()
         {
             var users = (await _Repo.UserListOrg("GetOrgData"))
@@ -53,7 +52,6 @@ namespace WLSPL_CRM_2.Controllers
             // Return view with hierarchy
             return View("Index", topUser);
         }
-
         public async Task<IActionResult> Showprofile()
         {
             string userId = HttpContext.Session.GetString("UserID");
@@ -64,6 +62,5 @@ namespace WLSPL_CRM_2.Controllers
             }
             return View(obj);
         }
-
     }
 }

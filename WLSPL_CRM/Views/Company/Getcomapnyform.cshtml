@@ -14,8 +14,15 @@
         <div class="card">
             <div class="card-header">
                 <div class="row align-items-center">
-                    <div class="col">
+                    <div class="col-auto">
                         <h4 class="card-title">Add Company </h4>
+                    </div>
+                    <div class="col-auto ms-auto">
+                        <a class="btn btn-primary" asp-controller="Company" asp-action="GetList">
+                            <div class="d-flex align-items-center">
+                                <span class="nav-link-text"> Company List </span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -168,7 +175,7 @@
                                 <div class="text-end mt-3">
                                     <button type="button" id="btnAddContactMain" class="btn btn-success">+ Add Contact</button>
                                 </div>
-
+                                <br />
                                 <!-- Submit Button -->
                                 <div class="d-flex justify-content-center">
                                     <button type="submit" class="btn btn-primary" id="btnSubmit">Submit</button>
@@ -317,7 +324,7 @@
                             </div>
                         </div>
                     </div>
-
+                    <br />
                     <!-- Submit Button -->
                     <div class="d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary" id="btnUpdate">Update</button>

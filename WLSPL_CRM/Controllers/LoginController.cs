@@ -16,8 +16,6 @@ namespace WLSPL_CRM_2.Controllers
     public class LoginController : Controller
     {
         private readonly IUserRegistrationRepo _UserRepo;
-        private object httpContext;
-
         public LoginController(IUserRegistrationRepo userRegistarion)
         {
             _UserRepo = userRegistarion;
